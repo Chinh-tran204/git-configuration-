@@ -6,13 +6,14 @@ Task:
 Create a plan for the given ticket/problem.
 Output:
 - PLAN
-- CURRENT_STEP
----
-Log the result as .md file as new entry in: .github/utility/linking/planning_log/
+- CURRENT_STEP 
+Log the result as .md file as new entry in:
+.github/utility/linking/planning_log/
 Format:
-name:  <ticket-name-or-short-description>_<YYYY-MM-DD>.md
+File name:
+<task-name>-<YYYYMMDD>.md
 Content:
-# Plan: <ticket-name-or-short-description>
+# Plan: <task name>
 Date: <YYYY-MM-DD>
 ## Summary
 <short description>
@@ -24,8 +25,5 @@ Date: <YYYY-MM-DD>
 <step number>
 ---
 Rules:
-- Append only (do not overwrite)
-- Use clear, short name (ticket ID or summary)
-- Keep entries separated by `---`
----
+- Append new files only (do not overwrite existing logs)
 Stop after logging.

@@ -3,22 +3,31 @@ agent: 'sherlock'
 description: 'Debug a specific bug and identify root cause'
 ---
 Task:
-Debug: ${input:task:Bug name or ticket ID}
+Debug: ${input:task:bug name or ticket}
+
 Mode:
 - Debugging
+
 Instructions:
 - Identify root cause
 - Trace execution flow
 - Explain how the issue happens
 - Map affected components
-- Outline a step-by-step fix plan (NO implementation yet)
-- DO NOT change or modify any file in `./github/utility/linking/planning_log/`
-- Implement to the code base step by step
----
+
+- THEN:
+  If the fix is clear and safe:
+  - Implement minimal fix in code
+
+Rules:
+- Prefer analysis first, implementation second
+- DO NOT modify:
+  .github/utility/linking/planning_log/
+- planning_log = READ ONLY
+
 Output:
 - Root cause
 - Execution flow
 - Affected areas
-- Fix plan
----
-Stop after analysis.
+- Fix (if applied)
+
+Stop after completion.

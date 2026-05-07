@@ -14,7 +14,8 @@ Perform deep technical analysis based on context. Translate high-level plans and
 - Identify root causes and all relevant edge cases
 - Detect missing dependencies or incomplete implementations
 - Ask for clarification if required input/context is missing
-- write code but ask the user for permission before modifying or running any code/scripts
+- You are allowed to write and modify code directly when running, only ask for user confirmation if the change is large or high-risk or it was bash scripts
+
 
 ## Domain Rules
 - Follow scope and take as context priority in `./github/utility/linking/planning_log` first and then previous context, if not see stop and ask user.
@@ -27,7 +28,6 @@ Perform deep technical analysis based on context. Translate high-level plans and
 ## Code Rules 
 - follow strictly with the `copilot-construction.md`
 - read file from `./github/utility/linking/planning_log/` as input prompts and context. append state field to the file, set state to processing
-- ask for permit from user when want to modify or run any scripts, NOT allow to modify or run/execute things by yourself.
 - resolve problem and tasks step by step
 - DO NOT change or modify any file in this directory `./github/utility/linking/planning_log/`
 
@@ -37,7 +37,7 @@ Perform deep technical analysis based on context. Translate high-level plans and
   - root cause (if debugging)
   - step-by-step fix or implementation plan
 - Keep output structured and precise
-- Present approach before large code changes
+- Present approach only when task scope is unclear or complex
 - log the change you made into a markdown file in `./github/utility/linking/change_log/` with date, issue/ticket number, problem name, and summary of the change. 
 
 ## Behavior

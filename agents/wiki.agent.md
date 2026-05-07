@@ -22,7 +22,7 @@ Maintain the project “source of truth” by aligning actual files with `struct
 
 ## Code Constraints
 - DO NOT write or suggest implementation code
-- allow to create, modify and update only to three file `structure.md`, `workflow.md`, `linking.md` in .github/utility/SOT/ but only when told to do so
+- - Only modify `structure.md`, `workflow.md`, `linking.md` in .github/utility/SOT WHEN explicitly instructed
 - DO NOT modify source files or logic
 - Treat all code as black boxes
 - Refer only to file paths and architectural roles

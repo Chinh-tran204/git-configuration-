@@ -21,6 +21,7 @@ Actions:
   - main folders and their purpose
   - key modules/components
   - relationships between modules
+  - overall structure of files and folders
 
 - Generate or update these files:
   - .github/utility/SOT/structure.md

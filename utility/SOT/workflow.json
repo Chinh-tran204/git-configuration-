@@ -1,0 +1,234 @@
+{
+  "workflows": {
+    "authentication": {
+      "name": "Authentication Flow",
+      "description": "User login and session management",
+      "steps": [
+        "User Input (UI) → Login Form",
+        "auth_login(username, password) called",
+        "Hash password & compare with credentials.db",
+        "Success: Create SessionInfo (token, role, timeout)",
+        "Store session in Data/sessions/",
+        "Return token to UI",
+        "Fail: Return error code and show login error message"
+      ],
+      "key-components": {
+        "role-based-access": ["ADMIN", "USER"],
+        "session-timeout": "8 hours",
+        "token-validation": "auth_verify_session()",
+        "audit-logging": "every login/logout"
+      }
+    },
+    "patient-management": {
+      "name": "Patient Management Flow",
+      "description": "Create, view, search, and update patient records",
+      "operations": {
+        "create": {
+          "flow": [
+            "UI patient_form → patient_create()",
+            "Create HL7 PID segment",
+            "Generate patient_id",
+            "Write to Data/patients/{id}.seg",
+            "Log to audit_logs",
+            "Return to UI"
+          ]
+        },
+        "view_search": {
+          "flow": [
+            "UI search input → patient_search_by_name/id()",
+            "Read .seg files from Data/patients/",
+            "Parse HL7 records",
+            "Display in table"
+          ]
+        },
+        "update": {
+          "flow": [
+            "UI edit form → patient_update_info()",
+            "Load existing .seg",
+            "Modify field",
+            "Rewrite .seg file",
+            "Log change to audit_logs",
+            "Return status"
+          ]
+        }
+      },
+      "data-format": "HL7 PID segments stored as .seg files",
+      "audit": "All changes logged with username, timestamp, field changes"
+    },
+    "appointment-management": {
+      "name": "Appointment Management Flow",
+      "description": "Book, reschedule, and cancel appointments",
+      "operations": {
+        "book": {
+          "flow": [
+            "UI appointment_form (patient_id, date/time, doctor)",
+            "appointment_manager.book_appointment()",
+            "Validate patient exists (patient_manager)",
+            "Check no conflicts in schedule",
+            "Create HL7 SCH segment",
+            "Store in Data/appointments/{apt_id}.seg",
+            "Log to audit_logs",
+            "Return confirmation"
+          ]
+        },
+        "reschedule_cancel": {
+          "flow": [
+            "Similar flow with update_appointment() or cancel_appointment()",
+            "Modify SCH status: PENDING → CONFIRMED → COMPLETED/CANCELLED",
+            "Log all changes"
+          ]
+        }
+      },
+      "conflict-detection": [
+        "Doctor availability",
+        "Patient availability",
+        "Resource availability"
+      ],
+      "status-transitions": ["PENDING", "CONFIRMED", "COMPLETED", "CANCELLED"]
+    },
+    "billing-invoice": {
+      "name": "Billing/Invoice Flow",
+      "description": "Create invoices and track payments",
+      "operations": {
+        "create_invoice": {
+          "flow": [
+            "UI billing_form (patient_id, procedures, amount)",
+            "billing_manager.create_invoice()",
+            "Validate patient exists",
+            "Calculate charges",
+            "Create HL7 UB1 segment",
+            "Store invoice (Data/backups/ or custom)",
+            "Log to audit_logs",
+            "Return invoice_id"
+          ]
+        },
+        "track_payment": {
+          "flow": [
+            "UI update payment status",
+            "Update invoice status: PENDING → PARTIAL → PAID",
+            "Log transaction"
+          ]
+        },
+        "generate_report": {
+          "flow": [
+            "Aggregate invoices by patient/date/status",
+            "Display in reports_form"
+          ]
+        }
+      },
+      "invoice-states": ["PENDING", "PARTIAL_PAYMENT", "PAID"]
+    },
+    "audit-logging": {
+      "name": "Audit Logging Flow",
+      "description": "Track all operations for compliance",
+      "every-operation": [
+        "Operation completes",
+        "audit_logger logs: Username, Timestamp, Operation type, Entity ID, Field changes, Result status",
+        "Write to Data/audit_logs/",
+        "Maintain for compliance"
+      ]
+    },
+    "ui-application-lifecycle": {
+      "name": "UI Application Lifecycle",
+      "description": "Application startup through logout",
+      "steps": [
+        "Application Start",
+        "Display Login Form (auth_form)",
+        "User Login",
+        "Create Session (backend auth_manager)",
+        "Load Main Window (main_window)",
+        "Render tabs based on role",
+        "USER tabs: Patients, My Appointments, Invoices",
+        "ADMIN tabs: All above + Reports, Audit, User Mgmt",
+        "User Actions → Backend Calls → Data Updates → UI Refresh",
+        "User Logout → Destroy Session → Back to Login"
+      ]
+    },
+    "data-backup-recovery": {
+      "name": "Data Backup & Recovery",
+      "description": "Backup and restore system data",
+      "backup": [
+        "Archive Data/patients/, appointments/, invoices",
+        "Compress with timestamp",
+        "Store in Data/backups/"
+      ],
+      "restore": [
+        "List available backups",
+        "User selects backup",
+        "Extract and restore to Data/",
+        "Verify integrity"
+      ]
+    },
+    "system-maintenance": {
+      "name": "System Maintenance",
+      "description": "System initialization and ongoing maintenance",
+      "init": [
+        "Create directory structure",
+        "Initialize credentials.db with admin user",
+        "Set up default configurations"
+      ],
+      "maintenance": [
+        "Archive old audit logs",
+        "Cleanup expired sessions",
+        "Defragment data files",
+        "Generate health report"
+      ]
+    }
+  },
+  "module-interaction-matrix": [
+    {
+      "from": "UI auth_form",
+      "to": "auth_manager",
+      "function": "auth_login()",
+      "data": "username, password"
+    },
+    {
+      "from": "UI patient_form",
+      "to": "patient_manager",
+      "function": "patient_create()",
+      "data": "demographics"
+    },
+    {
+      "from": "UI patient_form",
+      "to": "patient_manager",
+      "function": "patient_search_by_name()",
+      "data": "search query"
+    },
+    {
+      "from": "patient_manager",
+      "to": "hl7_parser",
+      "function": "Parse PID segments",
+      "data": "HL7 data"
+    },
+    {
+      "from": "UI appointment_form",
+      "to": "appointment_manager",
+      "function": "book_appointment()",
+      "data": "patient_id, date/time"
+    },
+    {
+      "from": "appointment_manager",
+      "to": "patient_manager",
+      "function": "Validate patient",
+      "data": "patient_id"
+    },
+    {
+      "from": "UI billing_form",
+      "to": "billing_manager",
+      "function": "create_invoice()",
+      "data": "charges data"
+    },
+    {
+      "from": "Any Backend",
+      "to": "audit_logger",
+      "function": "Log operation",
+      "data": "operation details"
+    },
+    {
+      "from": "Any Backend",
+      "to": "utils",
+      "function": "validate_input()",
+      "data": "user input"
+    }
+  ]
+}

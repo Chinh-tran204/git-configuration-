@@ -1,77 +1,54 @@
 ---
 agent: 'sherlock'
-description: 'Recheck implementation for bugs, edge cases, and quality'
+description: 'Re-implement task based on updated plan after review failure'
 ---
 Task:
-Recheck: ${input:task:feature or bug name}
+Recheck: ${input:task:ticket or feature name (optional)}
 
 Mode:
-- Validation / second-pass review
+- Re-implementation
 
-Instructions:
-- Check for:
+Context:
+- If task is provided → use it
+- If not → scan:
+  .github/utility/linking/change_log/
+  → find entries with:
+    status: recheck
 
-  ### Logic & Behavior
-  - logic errors
-  - incorrect assumptions
-  - incomplete flows
-  - unexpected behavior paths
+---
 
-  ### Edge Cases
-  - empty / null inputs
-  - boundary conditions
-  - unusual or extreme inputs
+Actions:
 
-  ### Safety & Stability
-  - unsafe operations
-  - crash risks
-  - invalid state transitions
-  - missing guards
+1. Identify target task (from input or change_log)
 
-  ### Data Handling
-  - incorrect parsing
-  - invalid format handling
-  - missing validation for inputs/outputs
+2. Locate corresponding plan in:
+  .github/utility/linking/planning_log/
 
-  ### Integration
-  - broken interactions between modules
-  - incorrect dependencies usage
-  - mismatch with expected workflow
+3. Use updated plan as source of truth
 
-  ### Code Quality
-  - redundant logic
-  - overly complex code paths
-  - unclear or inconsistent structure
+4. Re-implement the task:
+  - fix issues from previous version
+  - follow updated plan strictly
+  - replace incorrect logic with corrected version
 
-  ### Consistency (IMPORTANT for your system)
-  - matches planning_log intent
-  - consistent with structure.md / workflow.md
-  - respects existing design patterns
-
-  ### Regression Check
-  - old behavior accidentally broken
-  - previously working paths affected
-
-- Review full scope of changes
-- Identify anything missed
-
-- ONLY IF issues are found AND fix is clear and safe:
-  - apply minimal corrections to the code
+5. Log changes into:
+  .github/utility/linking/change_log/
 
 ---
 
 Rules:
-- Prefer analysis first, correction second
-- DO NOT modify:
-  .github/utility/linking/planning_log/
+- planning_log = READ ONLY (do not modify)
+- use ONLY updated plan as guidance
+- do not reuse flawed implementation blindly
+- ensure issues flagged by review are resolved
 
 ---
 
 Output:
-- Issues found (if any)
-- Risk level (low / medium / high)
-- Suggested corrections (or fixes if applied)
+- Summary of fixes applied
+- Files modified
+- Notes on resolved issues
 
 ---
 
-Stop after review.
+Stop after re-implementation.

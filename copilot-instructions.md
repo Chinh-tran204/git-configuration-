@@ -1,9 +1,7 @@
 ** Copilot-instruction **
-
-## 1. Think Before Coding
-
-**Don't assume. Don't hide confusion. Surface tradeoffs.**
-
+### 1. Think Before Coding
+ 
+**Don't assume. Don't hide confusion. Surface tradeoffs.** 
 Before implementing:
 - State your assumptions explicitly. If uncertain, ask.
 - If multiple interpretations exist, present them - don't pick silently.
@@ -12,40 +10,36 @@ Before implementing:
 - be precise and concise in your suggestion and code.
 - don't chit chat to much, user just skim reading, so get to the point quickly.
 
-## 2. Simplicity First
-
+### 2. Simplicity First
+ 
 **Minimum code that solves the problem. Nothing speculative.**
-
 - No features beyond what was asked.
 - No abstractions for single-use code.
 - No "flexibility" or "configurability" that wasn't requested.
 - No error handling for impossible scenarios.
-- If you write 200 lines and it could be 50, rewrite it.
-
+- If you write 200 lines and it could be 50, rewrite it. 
 Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
 
-## 3. Surgical Changes
-
-**Touch only what you must. Clean up only your own mess.**
-
+### 3. Surgical Changes
+ 
+**Touch only what you must. Clean up only your own mess.** 
 When editing existing code:
 - Don't "improve" adjacent code, comments, or formatting.
 - Don't refactor things that aren't broken.
 - Match existing style, even if you'd do it differently.
 - If you notice unrelated dead code, mention it - don't delete it.
 - explicitly handle edge case and error case, notify user about them.
-- Make sure to check and making changes to all the instances of the object you edit, but do prompt and ask user for each changes.
+- Make sure to check and making changes to all the instances of the object you edit, but do prompt and ask user for each changes. 
 
 When your changes create orphans:
 - Remove imports/variables/functions that YOUR changes made unused.
-- Don't remove pre-existing dead code unless asked.
+- Don't remove pre-existing dead code unless asked. 
 
 The test: Every changed line should trace directly to the user's request.
 
-## 4. Goal-Driven Execution
-
-**Define success criteria. Loop until verified.**
-
+### 4. Goal-Driven Execution
+ 
+**Define success criteria. Loop until verified.** 
 Transform tasks into verifiable goals:
 - "Add validation" → "Write tests for invalid inputs, then make them pass"
 - "Fix the bug" → "Write a test that reproduces it, then make it pass"
@@ -54,15 +48,34 @@ Transform tasks into verifiable goals:
 - "investigate issue Z" → "Identify root cause, edge cases, and a clear implementation plan"
 - "improve performance" → "Identify bottleneck, propose specific optimization, and verify improvement with benchmarks"
 - "handle error case E" → "Write a test that triggers E, then implement handling to make it pass"
-- "improve feature F" → "Identify specific improvements, implement them, and verify with tests or benchmarks"
+- "improve feature F" → "Identify specific improvements, implement them, and verify with tests or benchmarks" 
 
 For multi-step tasks, state a brief plan:
-```
 1. [Step] → verify: [check]
 2. [Step] → verify: [check]
-3. [Step] → verify: [check]
-```
+3. [Step] → verify: [check] 
 
 Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
 
 ---
+
+### 5. File Modification Rules
+
+- When working with existing files:
+  - ALWAYS read the current file content first
+  - NEVER recreate the file if it already exists
+  - ALWAYS modify or append to the existing file
+
+- For log and tracking files:
+  - Do NOT overwrite existing entries
+  - Append new entries or update specific sections only
+
+- For structured and core files:
+  - Preserve all valid existing content
+  - Only update:
+    - missing fields
+    - incorrect sections
+    - explicitly targeted entries
+
+- If unsure:
+  - STOP and ask instead of recreating the file

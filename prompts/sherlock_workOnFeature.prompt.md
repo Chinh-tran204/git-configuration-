@@ -2,27 +2,24 @@
 agent: 'sherlock'
 description: 'Implement a feature or task from a ticket'
 ---
+
+Use feature_work.skill.md
+
 Task:
 Work on: ${input:task:ticket or feature name}
 
 Mode:
 - Feature implementation
 
-Instructions:
-- Read relevant context (wiki outputs, logs)
-- Plan execution internally if needed
-- Implement to the code base step by step
-- Log all actions in:
-  .github/utility/linking/change_log/
+Context:
+- Use planning_log as source of truth
+- Use change_log for history
 
 Rules:
-- DO NOT write to:
-  .github/utility/linking/planning_log/
-- Use planning_log as read-only context
-- planning_log = READ ONLY
+- planning_log is read-only
+- Identify and reuse exact task name
+- Always update existing change_log file (no recreate)
+
 Output:
 - Summary of actions taken
 - Files modified
-- Notes
-
-Stop when current progress is complete.

@@ -44,13 +44,13 @@ Output:
 ---
 
 Log result in:
-.github/utility/linking/planning_log/
+`.github/utility/linking/planning_log/`
 
 Rules:
 
 - NEW task → create new file
 
-- EXISTING task → update ONLY:
+- EXISTING task → update and modify ONLY:
   - missing fields
   - incorrect or incomplete steps
 

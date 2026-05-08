@@ -2,32 +2,27 @@
 agent: 'sherlock'
 description: 'Deep investigation and analysis of a topic/module'
 ---
+
+Use investigate.skill.md
+
 Task:
 Investigate: ${input:task:topic or module}
 
 Mode:
 - Deep analysis
 
-Instructions:
-- Explore related files/modules
-- Map relationships and dependencies
-- Identify usage patterns
-- Highlight risks and behavior
-
-- OPTIONAL:
-  If useful:
-  - run small code-level exploration or test changes
+Context:
+- Use change_log for implementation reference
+- Use planning_log for intended behavior (read-only)
 
 Rules:
-- Focus on understanding first
-- DO NOT modify:
+- Do NOT modify:
   .github/utility/linking/planning_log/
-- planning_log = READ ONLY
+- Focus only on relevant modules/files
+- Avoid unnecessary full-repo scanning
 
 Output:
-- Overview
-- Key components
-- Relationship map
-- Observations
-
-Stop after analysis.
+- overview
+- key components
+- relationship map
+- observations

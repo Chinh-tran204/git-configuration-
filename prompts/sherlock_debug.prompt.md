@@ -2,32 +2,21 @@
 agent: 'sherlock'
 description: 'Debug a specific bug and identify root cause'
 ---
+
+Use debugging.skill.md
+
 Task:
-Debug: ${input:task:bug name or ticket}
+Debug: ${input:task}
 
 Mode:
 - Debugging
 
-Instructions:
-- Identify root cause
-- Trace execution flow
-- Explain how the issue happens
-- Map affected components
-
-- THEN:
-  If the fix is clear and safe:
-  - Implement minimal fix in code
-
 Rules:
-- Prefer analysis first, implementation second
-- DO NOT modify:
-  .github/utility/linking/planning_log/
-- planning_log = READ ONLY
+- planning_log is read-only
+- follow existing context only
 
 Output:
-- Root cause
-- Execution flow
-- Affected areas
-- Fix (if applied)
-
-Stop after completion.
+- root cause
+- execution flow
+- affected areas
+- fix (if applied)

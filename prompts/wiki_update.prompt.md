@@ -27,7 +27,7 @@ After successfully applying updates:
   .github/utility/linking/planning_log/
 
 - Remove that entry if:
-  - the task is completed and **status:** == reviewed only
+  - the same task status in `./github/utility/linking/change_log/` is **status:** == reviewed only
 
 ---
 
@@ -45,5 +45,4 @@ Output:
 
 ---
 
-Stop after updating and cleanup.
-``
+Stop after updating and cleanup

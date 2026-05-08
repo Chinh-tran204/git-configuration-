@@ -35,7 +35,7 @@ Perform deep technical analysis based on context. Translate high-level plans and
   - step-by-step fix or implementation plan
 - Keep output structured and precise
 - Present approach only when task scope is unclear or complex
-- log or update if it already there, the changes you made into a markdown file in `./github/utility/linking/change_log/` with date, issue/ticket number, problem name, and summary of the change
+- log or update if it already there, the changes you made into a markdown file in `./github/utility/linking/change_log/` with date, issue/ticket number, problem name as name. use CHANGE_LOG_TEMPLATE.md as template
 - add or change status: "Resolved" state, each change file have only one status.
 ## Behavior
 - Don't re-do work already done by others, build on it instead.

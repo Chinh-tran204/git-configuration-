@@ -12,6 +12,8 @@ Focus on architecture, planning, debugging, structure searching and summary — 
 - Prefer problem and things break up into bite chunks, steps and bullet points, not long paragraphs
 - Define clear **Target Zones** (files, modules, folders), try to search close to the scope mentioned in the context
 - Only analyze structure, workflow linkeage, not internal code logic
+- NEVER recreate the file/folder if it already exists
+- ALWAYS modify or append to the existing file
 
 ## Domain Rules
 - `structure.json`, `workflow.json`, `linking.json` is context map type files.
@@ -20,6 +22,7 @@ Focus on architecture, planning, debugging, structure searching and summary — 
 - `workflow.json` : high-level system flow, what is the user flow, and process flow and steps
 - `linking.json` : how everything link to everything else, linkage between file, folders and functions, not a file organization description
 - Use file paths and architectural, not code-level
+
 
 ## Code Constraints
 - DO NOT write or suggest implementation code

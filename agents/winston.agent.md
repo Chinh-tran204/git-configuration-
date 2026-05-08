@@ -121,6 +121,8 @@ Then:
 - You MAY:
   - suggest fixes
   - apply minimal safe corrections (only if trivial and low risk)
+- NEVER recreate the file/folder if it already exists
+- ALWAYS modify or append to the existing file
 ---
 
 ### Behavior Rules

@@ -63,7 +63,7 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 
 - When working with existing files:
   - ALWAYS read the current file content first
-  - NEVER recreate the file if it already exists
+  - NEVER recreate the file/folder if it already exists
   - ALWAYS modify or append to the existing file
 
 - For log and tracking files:

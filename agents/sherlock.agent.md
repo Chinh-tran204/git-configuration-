@@ -13,6 +13,8 @@ Perform deep technical analysis based on context. Translate high-level plans and
 - Break complex logic into clear step-by-step flows- Identify root causes and all relevant edge cases
 - Detect missing dependencies or incomplete implementations, do not assume missing technical details
 - You are allowed to write and modify code directly when running, only ask for user confirmation if the change is large or high-risk or it was bash scripts
+- NEVER recreate the file/folder if it already exists
+- ALWAYS modify or append to the existing file
 
 
 ## Domain Rules

@@ -1,0 +1,282 @@
+{
+  "projectName": "Hospital Management System",
+  "rootPath": "HospitalApp",
+  "description": "Hospital information management system with patient records, appointments, billing, and audit logging",
+  "version": "1.0.0",
+  "lastUpdated": "2026-05-09",
+  "modules": [
+    {
+      "id": "root",
+      "type": "Project",
+      "name": "HospitalApp",
+      "path": "HospitalApp",
+      "description": "Root project directory for hospital management system",
+      "children": ["backend_module", "ui_module", "data_module", "scripts_module", "tests_module"]
+    },
+    {
+      "id": "backend_module",
+      "type": "Module",
+      "name": "Backend",
+      "path": "HospitalApp/Backend",
+      "description": "Core backend business logic and data management",
+      "parent": "root",
+      "files": [
+        {
+          "id": "auth_mgr",
+          "name": "auth_manager",
+          "type": "Source",
+          "path": "HospitalApp/Backend/auth_manager.c",
+          "headerPath": "HospitalApp/Backend/auth_manager.h",
+          "description": "User authentication and session management",
+          "functions": [
+            {"name": "auth_login", "lineNumber": 187, "signature": "int auth_login(const char *username, const char *password, SessionInfo *session)"},
+            {"name": "auth_logout", "lineNumber": 222, "signature": "int auth_logout(const char *token)"},
+            {"name": "auth_verify_session", "lineNumber": 241, "signature": "int auth_verify_session(const char *token, SessionInfo *session)"},
+            {"name": "auth_create_user", "lineNumber": 267, "signature": "int auth_create_user(const char *username, const char *password, const char *role, const char *admin_token)"},
+            {"name": "auth_delete_user", "lineNumber": 311, "signature": "int auth_delete_user(const char *username, const char *admin_token)"},
+            {"name": "auth_modify_user", "lineNumber": 338, "signature": "int auth_modify_user(const char *username, const char *new_password, const char *new_role, const char *admin_token)"},
+            {"name": "auth_check_permission", "lineNumber": 378, "signature": "int auth_check_permission(const char *token, const char *required_role)"},
+            {"name": "auth_get_user_role", "lineNumber": 396, "signature": "int auth_get_user_role(const char *username, char *role, int max_len)"},
+            {"name": "auth_list_users", "lineNumber": 412, "signature": "int auth_list_users(UserInfo **users, int *user_count)"},
+            {"name": "auth_create_session", "lineNumber": 468, "signature": "int auth_create_session(const char *username, const char *role, SessionInfo *session)"},
+            {"name": "auth_clear_expired_sessions", "lineNumber": 488, "signature": "int auth_clear_expired_sessions(void)"},
+            {"name": "auth_is_admin_session", "lineNumber": 628, "signature": "int auth_is_admin_session(const char *token)"}
+          ]
+        },
+        {
+          "id": "patient_mgr",
+          "name": "patient_manager",
+          "type": "Source",
+          "path": "HospitalApp/Backend/patient_manager.c",
+          "headerPath": "HospitalApp/Backend/patient_manager.h",
+          "description": "Patient record creation, retrieval, updating, and search operations",
+          "functions": [
+            {"name": "patient_create", "lineNumber": 52, "signature": "int patient_create(const char *first_name, const char *last_name, const char *dob, const char *gender, const char *phone, const char *address, const char *city, const char *state, const char *zip, const char *country, char *patient_id)"},
+            {"name": "patient_read", "lineNumber": 139, "signature": "int patient_read(const char *patient_id, PatientRecord *record)"},
+            {"name": "patient_update_info", "lineNumber": 214, "signature": "int patient_update_info(const char *patient_id, const char *username, const char *field, const char *new_value)"},
+            {"name": "patient_archive", "lineNumber": 291, "signature": "int patient_archive(const char *patient_id, const char *admin_token)"},
+            {"name": "patient_search_by_id", "lineNumber": 311, "signature": "int patient_search_by_id(const char *patient_id, HL7_PID *pid)"},
+            {"name": "patient_search_by_name", "lineNumber": 328, "signature": "int patient_search_by_name(const char *first_name, const char *last_name, HL7_PID **results, int *count)"},
+            {"name": "patient_search_by_phone", "lineNumber": 372, "signature": "int patient_search_by_phone(const char *phone, HL7_PID *pid)"},
+            {"name": "patient_list_all", "lineNumber": 405, "signature": "int patient_list_all(char **patient_ids, int *count)"},
+            {"name": "patient_validate", "lineNumber": 454, "signature": "int patient_validate(const PatientRecord *record)"}
+          ]
+        },
+        {
+          "id": "appointment_mgr",
+          "name": "appointment_manager",
+          "type": "Source",
+          "path": "HospitalApp/Backend/appointment_manager.c",
+          "headerPath": "HospitalApp/Backend/appointment_manager.h",
+          "description": "Appointment scheduling, rescheduling, cancellation, and listing",
+          "functions": [
+            {"name": "appointment_book", "lineNumber": 53, "signature": "int appointment_book(const char *patient_id, const char *scheduled_date, const char *scheduled_time, const char *doctor_name, const char *appointment_type, const char *notes, const char *username, char *appointment_id)"},
+            {"name": "appointment_reschedule", "lineNumber": 159, "signature": "int appointment_reschedule(const char *appointment_id, const char *new_date, const char *new_time, const char *username)"},
+            {"name": "appointment_cancel", "lineNumber": 213, "signature": "int appointment_cancel(const char *appointment_id, const char *reason, const char *username)"},
+            {"name": "appointment_complete", "lineNumber": 234, "signature": "int appointment_complete(const char *appointment_id, const char *username)"},
+            {"name": "appointment_get", "lineNumber": 254, "signature": "int appointment_get(const char *appointment_id, Appointment *appointment)"},
+            {"name": "appointment_list_patient", "lineNumber": 300, "signature": "int appointment_list_patient(const char *patient_id, Appointment **appointments, int *count)"},
+            {"name": "appointment_list_doctor", "lineNumber": 350, "signature": "int appointment_list_doctor(const char *doctor_name, Appointment **appointments, int *count)"},
+            {"name": "appointment_list_by_date", "lineNumber": 398, "signature": "int appointment_list_by_date(const char *date, Appointment **appointments, int *count)"}
+          ]
+        },
+        {
+          "id": "billing_mgr",
+          "name": "billing_manager",
+          "type": "Source",
+          "path": "HospitalApp/Backend/billing_manager.c",
+          "headerPath": "HospitalApp/Backend/billing_manager.h",
+          "description": "Invoice creation, payment recording, and billing report generation",
+          "functions": [
+            {"name": "billing_create_invoice", "lineNumber": 43, "signature": "int billing_create_invoice(const char *patient_id, const char *procedure_code, const char *procedure_desc, double charge_amount, const char *username, char *invoice_id)"},
+            {"name": "billing_record_payment", "lineNumber": 128, "signature": "int billing_record_payment(const char *invoice_id, double payment_amount, const char *payment_method, const char *reference_id, const char *username)"},
+            {"name": "billing_void_invoice", "lineNumber": 198, "signature": "int billing_void_invoice(const char *invoice_id, const char *reason, const char *admin_token)"},
+            {"name": "billing_get_invoice", "lineNumber": 221, "signature": "int billing_get_invoice(const char *invoice_id, Invoice *invoice)"},
+            {"name": "billing_list_patient_invoices", "lineNumber": 268, "signature": "int billing_list_patient_invoices(const char *patient_id, Invoice **invoices, int *count)"},
+            {"name": "billing_get_patient_report", "lineNumber": 317, "signature": "int billing_get_patient_report(const char *patient_id, BillingReport *report)"},
+            {"name": "billing_find_overdue_invoices", "lineNumber": 345, "signature": "int billing_find_overdue_invoices(Invoice **overdue, int *count)"},
+            {"name": "billing_calculate_balance", "lineNumber": 491, "signature": "int billing_calculate_balance(const char *patient_id, double *balance)"},
+            {"name": "billing_validate_invoice", "lineNumber": 506, "signature": "int billing_validate_invoice(const Invoice *invoice)"}
+          ]
+        },
+        {
+          "id": "audit_logger",
+          "name": "audit_logger",
+          "type": "Source",
+          "path": "HospitalApp/Backend/audit_logger.c",
+          "headerPath": "HospitalApp/Backend/audit_logger.h",
+          "description": "Audit trail logging for compliance and change tracking",
+          "functions": [
+            {"name": "audit_log_action", "lineNumber": 12, "signature": "int audit_log_action(const char *patient_id, const char *username, const char *action, const char *field, const char *old_value, const char *new_value, const char *reason)"},
+            {"name": "audit_log_system_action", "lineNumber": 38, "signature": "int audit_log_system_action(const char *username, const char *action, const char *details)"},
+            {"name": "audit_get_patient_history", "lineNumber": 113, "signature": "int audit_get_patient_history(const char *patient_id, const char *start_date, const char *end_date, AuditEntry **entries, int *entry_count)"},
+            {"name": "audit_get_user_actions", "lineNumber": 174, "signature": "int audit_get_user_actions(const char *username, const char *start_date, const char *end_date, AuditEntry **entries, int *entry_count)"},
+            {"name": "audit_export_to_csv", "lineNumber": 308, "signature": "int audit_export_to_csv(const char *filename, AuditEntry *entries, int entry_count)"},
+            {"name": "audit_cleanup_old_logs", "lineNumber": 359, "signature": "int audit_cleanup_old_logs(int days_old)"}
+          ]
+        },
+        {
+          "id": "hl7_parser",
+          "name": "hl7_parser",
+          "type": "Source",
+          "path": "HospitalApp/Backend/hl7_parser.c",
+          "headerPath": "HospitalApp/Backend/hl7_parser.h",
+          "description": "HL7 medical data format parsing for segments (MSH, PID, OBX, SCH, UB1)",
+          "functions": [
+            {"name": "extract_field", "lineNumber": 5, "signature": "int extract_field(const char *line, int field_num, char *output, int max_len)"},
+            {"name": "parse_msh_segment", "lineNumber": 73, "signature": "int parse_msh_segment(const char *line, HL7_MSH *msh)"},
+            {"name": "parse_pid_segment", "lineNumber": 120, "signature": "int parse_pid_segment(const char *line, HL7_PID *pid)"},
+            {"name": "parse_obx_segment", "lineNumber": 169, "signature": "int parse_obx_segment(const char *line, HL7_OBX *obx)"},
+            {"name": "parse_sch_segment", "lineNumber": 206, "signature": "int parse_sch_segment(const char *line, HL7_SCH *sch)"},
+            {"name": "validate_pid_segment", "lineNumber": 411, "signature": "int validate_pid_segment(const HL7_PID *pid)"},
+            {"name": "parse_hl7_message", "lineNumber": 423, "signature": "int parse_hl7_message(const char *message, const char *segment_type, void *output_struct)"}
+          ]
+        },
+        {
+          "id": "utils",
+          "name": "utils",
+          "type": "Source",
+          "path": "HospitalApp/Backend/utils.c",
+          "headerPath": "HospitalApp/Backend/utils.h",
+          "description": "Utility functions for file operations, validation, and logging",
+          "functions": [
+            {"name": "file_exists", "lineNumber": 10, "signature": "int file_exists(const char *filename)"},
+            {"name": "append_to_file", "lineNumber": 47, "signature": "int append_to_file(const char *filename, const char *data)"},
+            {"name": "trim_string", "lineNumber": 92, "signature": "void trim_string(char *str)"},
+            {"name": "split_string", "lineNumber": 113, "signature": "int split_string(char *str, const char *delimiter, char **fields, int max_fields)"},
+            {"name": "validate_email", "lineNumber": 206, "signature": "int validate_email(const char *email)"},
+            {"name": "validate_phone", "lineNumber": 225, "signature": "int validate_phone(const char *phone)"},
+            {"name": "validate_date", "lineNumber": 233, "signature": "int validate_date(const char *date)"},
+            {"name": "validate_patient_id", "lineNumber": 247, "signature": "int validate_patient_id(const char *id)"},
+            {"name": "verify_password", "lineNumber": 282, "signature": "int verify_password(const char *password, const char *hash)"},
+            {"name": "log_error", "lineNumber": 292, "signature": "void log_error(const char *module, const char *message)"},
+            {"name": "log_info", "lineNumber": 301, "signature": "void log_info(const char *module, const char *message)"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ui_module",
+      "type": "Module",
+      "name": "UI",
+      "path": "HospitalApp/UI",
+      "description": "User interface components (GTK+ based, partially implemented)",
+      "parent": "root",
+      "status": "incomplete",
+      "plannedFiles": [
+        "ui_utils.c (utilities)",
+        "main_window.c (main application window)",
+        "login_form.c (authentication UI)",
+        "patient_form.c (patient management UI)",
+        "appointment_form.c (appointment scheduling UI)",
+        "billing_form.c (invoice management UI)",
+        "report_viewer.c (analytics and reporting UI)"
+      ]
+    },
+    {
+      "id": "data_module",
+      "type": "Module",
+      "name": "Data",
+      "path": "HospitalApp/Data",
+      "description": "Data storage directories for runtime data",
+      "parent": "root",
+      "directories": [
+        {
+          "name": "appointments",
+          "description": "Appointment records storage"
+        },
+        {
+          "name": "audit_logs",
+          "description": "Audit trail and compliance logs"
+        },
+        {
+          "name": "patients",
+          "description": "Patient HL7 segment records"
+        },
+        {
+          "name": "config",
+          "description": "Configuration and system settings"
+        },
+        {
+          "name": "sessions",
+          "description": "Active user session tokens"
+        },
+        {
+          "name": "backups",
+          "description": "Database backups archive"
+        }
+      ]
+    },
+    {
+      "id": "scripts_module",
+      "type": "Module",
+      "name": "Scripts",
+      "path": "HospitalApp/Scripts",
+      "description": "Maintenance and operational bash scripts",
+      "parent": "root",
+      "files": [
+        {
+          "name": "init_db.sh",
+          "description": "Database initialization script"
+        },
+        {
+          "name": "backup.sh",
+          "description": "Data backup automation"
+        },
+        {
+          "name": "restore.sh",
+          "description": "Restore from backup"
+        },
+        {
+          "name": "hl7_validator.sh",
+          "description": "HL7 message validation utility"
+        },
+        {
+          "name": "maintenance.sh",
+          "description": "System maintenance tasks"
+        }
+      ]
+    },
+    {
+      "id": "tests_module",
+      "type": "Module",
+      "name": "Tests",
+      "path": "HospitalApp/Tests",
+      "description": "Test suite (not yet implemented)",
+      "parent": "root",
+      "status": "empty"
+    }
+  ],
+  "dataStructures": [
+    {
+      "name": "SessionInfo",
+      "location": "Backend/auth_manager.h",
+      "purpose": "User session information with token, role, and expiry",
+      "fields": ["token", "username", "role", "login_time", "expiry_time", "ip_address", "pid"]
+    },
+    {
+      "name": "PatientRecord",
+      "location": "Backend/patient_manager.h",
+      "purpose": "Complete patient data combining HL7 segments",
+      "composedOf": ["HL7_PID", "HL7_OBX[]", "HL7_SCH[]", "HL7_UB1[]"]
+    },
+    {
+      "name": "Appointment",
+      "location": "Backend/appointment_manager.h",
+      "purpose": "Appointment booking information",
+      "fields": ["appointment_id", "patient_id", "scheduled_date", "doctor_name", "appointment_status"]
+    },
+    {
+      "name": "Invoice",
+      "location": "Backend/billing_manager.h",
+      "purpose": "Billing invoice record",
+      "fields": ["invoice_id", "patient_id", "charge_amount", "payment_status", "procedure_code"]
+    },
+    {
+      "name": "AuditEntry",
+      "location": "Backend/audit_logger.h",
+      "purpose": "Compliance audit log entry",
+      "fields": ["timestamp", "username", "action", "field", "old_value", "new_value"]
+    }
+  ]
+}

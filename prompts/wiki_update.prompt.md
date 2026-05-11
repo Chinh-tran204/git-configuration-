@@ -13,9 +13,9 @@ Actions:
 - Extract relevant structural or workflow changes
 - Apply updates to:
 
-  - .github/utility/SOT/structure.md
-  - .github/utility/SOT/workflow.md
-  - .github/utility/SOT/linking.md
+  - .github/utility/SOT/structure.json
+  - .github/utility/SOT/workflow.json
+  - .github/utility/SOT/linking.json
 
 ---
 

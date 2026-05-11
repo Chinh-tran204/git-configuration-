@@ -1,0 +1,463 @@
+{
+  "projectName": "Hospital Management System",
+  "linkingVersion": "1.0.0",
+  "lastUpdated": "2026-05-09",
+  "description": "Technical code-level dependencies, function calls, and data relationships",
+  "nodes": [
+    {
+      "nodeId": "auth_login",
+      "symbolName": "auth_login",
+      "type": "Function",
+      "filePath": "HospitalApp/Backend/auth_manager.c",
+      "lineNumber": 187,
+      "signature": "int auth_login(const char *username, const char *password, SessionInfo *session)",
+      "dependsOn": [
+        "validate_email",
+        "validate_password",
+        "verify_password",
+        "auth_create_session",
+        "audit_log_system_action"
+      ],
+      "reads": ["Data/credentials.db"],
+      "writes": ["Data/sessions/"],
+      "relatedStructures": ["SessionInfo", "UserInfo"]
+    },
+    {
+      "nodeId": "auth_create_session",
+      "symbolName": "auth_create_session",
+      "type": "Function",
+      "filePath": "HospitalApp/Backend/auth_manager.c",
+      "lineNumber": 468,
+      "signature": "int auth_create_session(const char *username, const char *role, SessionInfo *session)",
+      "producesStructure": "SessionInfo",
+      "relatedFunctions": ["auth_login", "auth_verify_session"]
+    },
+    {
+      "nodeId": "auth_check_permission",
+      "symbolName": "auth_check_permission",
+      "type": "Function",
+      "filePath": "HospitalApp/Backend/auth_manager.c",
+      "lineNumber": 378,
+      "signature": "int auth_check_permission(const char *token, const char *required_role)",
+      "dependsOn": ["auth_verify_session", "auth_get_user_role"],
+      "usedBy": [
+        "patient_create",
+        "patient_update_info",
+        "appointment_book",
+        "billing_create_invoice"
+      ]
+    },
+    {
+      "nodeId": "patient_create",
+      "symbolName": "patient_create",
+      "type": "Function",
+      "filePath": "HospitalApp/Backend/patient_manager.c",
+      "lineNumber": 52,
+      "signature": "int patient_create(...)",
+      "dependsOn": [
+        "patient_get_next_id",
+        "patient_validate",
+        "validate_email",
+        "validate_phone",
+        "validate_date",
+        "audit_log_action"
+      ],
+      "reads": ["Data/patients/PATIENT_ID_COUNTER.txt"],
+      "writes": ["Data/patients/"],
+      "producesStructure": "HL7_PID"
+    },
+    {
+      "nodeId": "patient_read",
+      "symbolName": "patient_read",
+      "type": "Function",
+      "filePath": "HospitalApp/Backend/patient_manager.c",
+      "lineNumber": 139,
+      "signature": "int patient_read(const char *patient_id, PatientRecord *record)",
+      "dependsOn": ["parse_pid_segment", "parse_obx_segment", "parse_sch_segment"],
+      "reads": ["Data/patients/"],
+      "producesStructure": "PatientRecord"
+    },
+    {
+      "nodeId": "patient_update_info",
+      "symbolName": "patient_update_info",
+      "type": "Function",
+      "filePath": "HospitalApp/Backend/patient_manager.c",
+      "lineNumber": 214,
+      "signature": "int patient_update_info(const char *patient_id, const char *username, const char *field, const char *new_value)",
+      "dependsOn": [
+        "patient_search_by_id",
+        "validate_email",
+        "validate_phone",
+        "audit_log_action"
+      ],
+      "reads": ["Data/patients/"],
+      "writes": ["Data/patients/"]
+    },
+    {
+      "nodeId": "patient_search_by_name",
+      "symbolName": "patient_search_by_name",
+      "type": "Function",
+      "filePath": "HospitalApp/Backend/patient_manager.c",
+      "lineNumber": 328,
+      "signature": "int patient_search_by_name(const char *first_name, const char *last_name, HL7_PID **results, int *count)",
+      "dependsOn": ["parse_pid_segment", "split_string"],
+      "reads": ["Data/patients/"]
+    },
+    {
+      "nodeId": "appointment_book",
+      "symbolName": "appointment_book",
+      "type": "Function",
+      "filePath": "HospitalApp/Backend/appointment_manager.c",
+      "lineNumber": 53,
+      "signature": "int appointment_book(...)",
+      "dependsOn": [
+        "appointment_get_next_id",
+        "appointment_is_available_slot",
+        "appointment_validate",
+        "validate_date",
+        "audit_log_action"
+      ],
+      "reads": ["Data/appointments/"],
+      "writes": ["Data/appointments/"],
+      "producesStructure": "HL7_SCH"
+    },
+    {
+      "nodeId": "appointment_is_available_slot",
+      "symbolName": "appointment_is_available_slot",
+      "type": "Function",
+      "filePath": "HospitalApp/Backend/appointment_manager.h",
+      "lineNumber": 0,
+      "dependsOn": ["appointment_find_conflicts"],
+      "reads": ["Data/appointments/"]
+    },
+    {
+      "nodeId": "appointment_reschedule",
+      "symbolName": "appointment_reschedule",
+      "type": "Function",
+      "filePath": "HospitalApp/Backend/appointment_manager.c",
+      "lineNumber": 159,
+      "signature": "int appointment_reschedule(const char *appointment_id, const char *new_date, const char *new_time, const char *username)",
+      "dependsOn": [
+        "appointment_get",
+        "appointment_is_available_slot",
+        "audit_log_action"
+      ],
+      "reads": ["Data/appointments/"],
+      "writes": ["Data/appointments/"]
+    },
+    {
+      "nodeId": "billing_create_invoice",
+      "symbolName": "billing_create_invoice",
+      "type": "Function",
+      "filePath": "HospitalApp/Backend/billing_manager.c",
+      "lineNumber": 43,
+      "signature": "int billing_create_invoice(...)",
+      "dependsOn": [
+        "billing_get_next_invoice_id",
+        "billing_validate_invoice",
+        "audit_log_action"
+      ],
+      "reads": ["Data/invoices/INVOICE_ID_COUNTER.txt"],
+      "writes": ["Data/invoices/"],
+      "producesStructure": "HL7_UB1"
+    },
+    {
+      "nodeId": "billing_record_payment",
+      "symbolName": "billing_record_payment",
+      "type": "Function",
+      "filePath": "HospitalApp/Backend/billing_manager.c",
+      "lineNumber": 128,
+      "signature": "int billing_record_payment(const char *invoice_id, double payment_amount, const char *payment_method, const char *reference_id, const char *username)",
+      "dependsOn": [
+        "billing_get_invoice",
+        "audit_log_action"
+      ],
+      "reads": ["Data/invoices/"],
+      "writes": ["Data/invoices/"]
+    },
+    {
+      "nodeId": "audit_log_action",
+      "symbolName": "audit_log_action",
+      "type": "Function",
+      "filePath": "HospitalApp/Backend/audit_logger.c",
+      "lineNumber": 12,
+      "signature": "int audit_log_action(const char *patient_id, const char *username, const char *action, const char *field, const char *old_value, const char *new_value, const char *reason)",
+      "writes": ["Data/audit_logs/"],
+      "producesStructure": "AuditEntry",
+      "calledBy": [
+        "patient_create",
+        "patient_update_info",
+        "appointment_book",
+        "appointment_cancel",
+        "billing_create_invoice"
+      ]
+    },
+    {
+      "nodeId": "parse_pid_segment",
+      "symbolName": "parse_pid_segment",
+      "type": "Function",
+      "filePath": "HospitalApp/Backend/hl7_parser.c",
+      "lineNumber": 120,
+      "signature": "int parse_pid_segment(const char *line, HL7_PID *pid)",
+      "dependsOn": ["extract_field", "validate_pid_segment"],
+      "producesStructure": "HL7_PID"
+    },
+    {
+      "nodeId": "parse_sch_segment",
+      "symbolName": "parse_sch_segment",
+      "type": "Function",
+      "filePath": "HospitalApp/Backend/hl7_parser.c",
+      "lineNumber": 206,
+      "signature": "int parse_sch_segment(const char *line, HL7_SCH *sch)",
+      "dependsOn": ["extract_field"],
+      "producesStructure": "HL7_SCH"
+    },
+    {
+      "nodeId": "validate_email",
+      "symbolName": "validate_email",
+      "type": "Function",
+      "filePath": "HospitalApp/Backend/utils.c",
+      "lineNumber": 206,
+      "signature": "int validate_email(const char *email)",
+      "usedBy": [
+        "auth_login",
+        "patient_create",
+        "patient_update_info"
+      ]
+    },
+    {
+      "nodeId": "validate_phone",
+      "symbolName": "validate_phone",
+      "type": "Function",
+      "filePath": "HospitalApp/Backend/utils.c",
+      "lineNumber": 225,
+      "signature": "int validate_phone(const char *phone)",
+      "usedBy": [
+        "patient_create",
+        "patient_update_info"
+      ]
+    },
+    {
+      "nodeId": "validate_date",
+      "symbolName": "validate_date",
+      "type": "Function",
+      "filePath": "HospitalApp/Backend/utils.c",
+      "lineNumber": 233,
+      "signature": "int validate_date(const char *date)",
+      "usedBy": [
+        "patient_create",
+        "appointment_book"
+      ]
+    }
+  ],
+  "links": [
+    {
+      "fromNode": "auth_login",
+      "toNode": "validate_email",
+      "linkType": "Calls"
+    },
+    {
+      "fromNode": "auth_login",
+      "toNode": "verify_password",
+      "linkType": "Calls"
+    },
+    {
+      "fromNode": "auth_login",
+      "toNode": "auth_create_session",
+      "linkType": "Calls"
+    },
+    {
+      "fromNode": "patient_create",
+      "toNode": "patient_get_next_id",
+      "linkType": "Calls"
+    },
+    {
+      "fromNode": "patient_create",
+      "toNode": "validate_email",
+      "linkType": "Calls"
+    },
+    {
+      "fromNode": "patient_create",
+      "toNode": "validate_phone",
+      "linkType": "Calls"
+    },
+    {
+      "fromNode": "patient_create",
+      "toNode": "validate_date",
+      "linkType": "Calls"
+    },
+    {
+      "fromNode": "patient_create",
+      "toNode": "audit_log_action",
+      "linkType": "Calls"
+    },
+    {
+      "fromNode": "patient_read",
+      "toNode": "parse_pid_segment",
+      "linkType": "Calls"
+    },
+    {
+      "fromNode": "patient_update_info",
+      "toNode": "audit_log_action",
+      "linkType": "Calls"
+    },
+    {
+      "fromNode": "appointment_book",
+      "toNode": "appointment_is_available_slot",
+      "linkType": "Calls"
+    },
+    {
+      "fromNode": "appointment_book",
+      "toNode": "appointment_get_next_id",
+      "linkType": "Calls"
+    },
+    {
+      "fromNode": "appointment_book",
+      "toNode": "audit_log_action",
+      "linkType": "Calls"
+    },
+    {
+      "fromNode": "appointment_reschedule",
+      "toNode": "appointment_is_available_slot",
+      "linkType": "Calls"
+    },
+    {
+      "fromNode": "appointment_reschedule",
+      "toNode": "audit_log_action",
+      "linkType": "Calls"
+    },
+    {
+      "fromNode": "billing_create_invoice",
+      "toNode": "billing_validate_invoice",
+      "linkType": "Calls"
+    },
+    {
+      "fromNode": "billing_create_invoice",
+      "toNode": "billing_get_next_invoice_id",
+      "linkType": "Calls"
+    },
+    {
+      "fromNode": "billing_create_invoice",
+      "toNode": "audit_log_action",
+      "linkType": "Calls"
+    },
+    {
+      "fromNode": "billing_record_payment",
+      "toNode": "billing_get_invoice",
+      "linkType": "Calls"
+    },
+    {
+      "fromNode": "auth_check_permission",
+      "toNode": "auth_verify_session",
+      "linkType": "Calls",
+      "validation": "Ensures user has required role before allowing action"
+    },
+    {
+      "fromNode": "parse_pid_segment",
+      "toNode": "extract_field",
+      "linkType": "Calls"
+    }
+  ],
+  "dataFlows": [
+    {
+      "from": "User",
+      "to": "auth_login",
+      "data": "username, password",
+      "purpose": "Authentication"
+    },
+    {
+      "from": "auth_login",
+      "to": "Data/sessions/",
+      "data": "SessionInfo",
+      "purpose": "Store session for user"
+    },
+    {
+      "from": "patient_create",
+      "to": "Data/patients/",
+      "data": "HL7_PID segment",
+      "purpose": "Persist patient record"
+    },
+    {
+      "from": "appointment_book",
+      "to": "Data/appointments/",
+      "data": "HL7_SCH segment",
+      "purpose": "Store appointment record"
+    },
+    {
+      "from": "billing_create_invoice",
+      "to": "Data/invoices/",
+      "data": "Invoice with UB1 segment",
+      "purpose": "Persist invoice for payment tracking"
+    },
+    {
+      "from": "Any Action",
+      "to": "audit_log_action",
+      "data": "AuditEntry (timestamp, user, action, old/new values)",
+      "purpose": "Compliance and audit trail"
+    }
+  ],
+  "moduleDependencies": [
+    {
+      "module": "auth_manager",
+      "dependsOn": ["utils"],
+      "reason": "Uses validation functions and logging"
+    },
+    {
+      "module": "patient_manager",
+      "dependsOn": ["hl7_parser", "utils", "audit_logger"],
+      "reason": "Parses HL7, validates data, logs changes"
+    },
+    {
+      "module": "appointment_manager",
+      "dependsOn": ["hl7_parser", "utils", "audit_logger"],
+      "reason": "Uses HL7 SCH segments, validation, auditing"
+    },
+    {
+      "module": "billing_manager",
+      "dependsOn": ["utils", "audit_logger"],
+      "reason": "Uses validation and audit logging"
+    },
+    {
+      "module": "audit_logger",
+      "dependsOn": ["utils"],
+      "reason": "Uses file operations and logging utilities"
+    }
+  ],
+  "criticalPaths": [
+    {
+      "pathId": "cp-auth-flow",
+      "pathName": "Authentication Flow",
+      "sequence": [
+        "auth_login",
+        "verify_password",
+        "auth_create_session",
+        "audit_log_system_action"
+      ],
+      "criticality": "HIGH",
+      "reason": "Core security pathway"
+    },
+    {
+      "pathId": "cp-patient-persistence",
+      "pathName": "Patient Data Persistence",
+      "sequence": [
+        "patient_create",
+        "patient_validate",
+        "parse_pid_segment",
+        "write to Data/patients/"
+      ],
+      "criticality": "HIGH",
+      "reason": "Core data integrity pathway"
+    },
+    {
+      "pathId": "cp-audit-logging",
+      "pathName": "Audit Trail Logging",
+      "sequence": [
+        "audit_log_action",
+        "audit_parse_entry",
+        "write to Data/audit_logs/"
+      ],
+      "criticality": "HIGH",
+      "reason": "Compliance and accountability"
+    }
+  ]
+}

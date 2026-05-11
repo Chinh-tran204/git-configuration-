@@ -1,0 +1,430 @@
+{
+  "projectName": "Hospital Management System",
+  "workflowVersion": "1.0.0",
+  "lastUpdated": "2026-05-09",
+  "description": "Key operational workflows and feature scopes",
+  "workflows": [
+    {
+      "workflowId": "wf-auth-login",
+      "workflowName": "User Authentication and Login",
+      "purpose": "Allow users to authenticate and create a session for system access",
+      "triggerSource": "User",
+      "triggerAction": "Enter credentials and click Login",
+      "steps": [
+        {
+          "stepId": 1,
+          "action": "User submits username and password",
+          "nodeType": "Trigger",
+          "leadsTo": 2
+        },
+        {
+          "stepId": 2,
+          "action": "Validate input format and length",
+          "nodeType": "Decision",
+          "function": "validate_email, validate_password",
+          "leadsTo": [3, 4]
+        },
+        {
+          "stepId": 3,
+          "condition": "Input validation fails",
+          "nodeType": "ErrorOutcome",
+          "action": "Display error message to user"
+        },
+        {
+          "stepId": 4,
+          "condition": "Input validation passes",
+          "action": "Call auth_login(username, password, session)",
+          "nodeType": "Action",
+          "module": "auth_manager",
+          "leadsTo": 5
+        },
+        {
+          "stepId": 5,
+          "action": "Verify credentials in Data/credentials.db",
+          "nodeType": "Decision",
+          "leadsTo": [6, 7]
+        },
+        {
+          "stepId": 6,
+          "condition": "Credentials invalid",
+          "nodeType": "ErrorOutcome",
+          "action": "Return error code, show login failed message"
+        },
+        {
+          "stepId": 7,
+          "condition": "Credentials valid",
+          "action": "Create session token, store in Data/sessions/",
+          "nodeType": "Action",
+          "function": "auth_create_session",
+          "leadsTo": 8
+        },
+        {
+          "stepId": 8,
+          "action": "Set session expiry (8 hours)",
+          "nodeType": "State",
+          "stateName": "SessionActive",
+          "leadsTo": 9
+        },
+        {
+          "stepId": 9,
+          "action": "Log login action to audit trail",
+          "nodeType": "Action",
+          "function": "audit_log_system_action",
+          "leadsTo": 10
+        },
+        {
+          "stepId": 10,
+          "action": "Redirect to main application window",
+          "nodeType": "SuccessOutcome",
+          "terminalCondition": "User authenticated and session created"
+        }
+      ]
+    },
+    {
+      "workflowId": "wf-patient-register",
+      "workflowName": "Patient Registration",
+      "purpose": "Register a new patient in the system with demographics",
+      "triggerSource": "User",
+      "triggerAction": "Click Register New Patient",
+      "steps": [
+        {
+          "stepId": 1,
+          "action": "Display patient registration form",
+          "nodeType": "Trigger"
+        },
+        {
+          "stepId": 2,
+          "action": "User fills in required fields (name, DOB, contact, address)",
+          "nodeType": "Decision",
+          "leadsTo": [3, 4]
+        },
+        {
+          "stepId": 3,
+          "condition": "Input validation fails",
+          "nodeType": "ErrorOutcome",
+          "validationFunctions": ["validate_email", "validate_phone", "validate_date"]
+        },
+        {
+          "stepId": 4,
+          "condition": "All required fields valid",
+          "action": "Call patient_create(...)",
+          "nodeType": "Action",
+          "module": "patient_manager",
+          "leadsTo": 5
+        },
+        {
+          "stepId": 5,
+          "action": "Generate unique patient ID",
+          "nodeType": "Action",
+          "function": "patient_get_next_id",
+          "leadsTo": 6
+        },
+        {
+          "stepId": 6,
+          "action": "Create HL7 PID segment and save to Data/patients/",
+          "nodeType": "Action",
+          "leadsTo": 7
+        },
+        {
+          "stepId": 7,
+          "action": "Log patient creation in audit trail",
+          "nodeType": "Action",
+          "function": "audit_log_action",
+          "leadsTo": 8
+        },
+        {
+          "stepId": 8,
+          "action": "Display patient ID and success message",
+          "nodeType": "SuccessOutcome",
+          "terminalCondition": "Patient registered successfully"
+        }
+      ]
+    },
+    {
+      "workflowId": "wf-patient-search",
+      "workflowName": "Patient Search and Retrieval",
+      "purpose": "Allow users to find patient records by various criteria",
+      "triggerSource": "User",
+      "triggerAction": "Enter search criteria (ID, name, phone)",
+      "steps": [
+        {
+          "stepId": 1,
+          "action": "User selects search method and enters criteria",
+          "nodeType": "Trigger"
+        },
+        {
+          "stepId": 2,
+          "action": "Route to appropriate search function",
+          "nodeType": "Decision",
+          "branches": [
+            "patient_search_by_id",
+            "patient_search_by_name",
+            "patient_search_by_phone"
+          ],
+          "leadsTo": 3
+        },
+        {
+          "stepId": 3,
+          "action": "Query Data/patients/ directory",
+          "nodeType": "Action",
+          "module": "patient_manager",
+          "leadsTo": 4
+        },
+        {
+          "stepId": 4,
+          "action": "Parse HL7 PID segments from matching files",
+          "nodeType": "Action",
+          "function": "parse_pid_segment",
+          "leadsTo": 5
+        },
+        {
+          "stepId": 5,
+          "action": "Return results to UI",
+          "nodeType": "Decision",
+          "leadsTo": [6, 7]
+        },
+        {
+          "stepId": 6,
+          "condition": "No results found",
+          "nodeType": "ErrorOutcome",
+          "action": "Display no records message"
+        },
+        {
+          "stepId": 7,
+          "condition": "Results found",
+          "action": "Display patient list and detailed view",
+          "nodeType": "SuccessOutcome"
+        }
+      ]
+    },
+    {
+      "workflowId": "wf-appointment-book",
+      "workflowName": "Appointment Booking",
+      "purpose": "Schedule a new appointment for a patient",
+      "triggerSource": "User",
+      "triggerAction": "Click Book Appointment",
+      "steps": [
+        {
+          "stepId": 1,
+          "action": "Display appointment booking form",
+          "nodeType": "Trigger"
+        },
+        {
+          "stepId": 2,
+          "action": "User selects patient, date, time, doctor, type",
+          "nodeType": "Decision",
+          "leadsTo": 3
+        },
+        {
+          "stepId": 3,
+          "action": "Validate date/time format and check availability",
+          "nodeType": "Decision",
+          "function": "appointment_is_available_slot",
+          "leadsTo": [4, 5]
+        },
+        {
+          "stepId": 4,
+          "condition": "Slot unavailable or validation fails",
+          "nodeType": "ErrorOutcome",
+          "action": "Show conflict or validation error"
+        },
+        {
+          "stepId": 5,
+          "condition": "Slot available and valid",
+          "action": "Call appointment_book(...)",
+          "nodeType": "Action",
+          "module": "appointment_manager",
+          "leadsTo": 6
+        },
+        {
+          "stepId": 6,
+          "action": "Generate appointment ID and create SCH segment",
+          "nodeType": "Action",
+          "function": "appointment_get_next_id",
+          "leadsTo": 7
+        },
+        {
+          "stepId": 7,
+          "action": "Save appointment to Data/appointments/",
+          "nodeType": "State",
+          "stateName": "AppointmentPending",
+          "leadsTo": 8
+        },
+        {
+          "stepId": 8,
+          "action": "Log appointment creation in audit trail",
+          "nodeType": "Action",
+          "leadsTo": 9
+        },
+        {
+          "stepId": 9,
+          "action": "Display appointment confirmation",
+          "nodeType": "SuccessOutcome",
+          "terminalCondition": "Appointment booked successfully"
+        }
+      ]
+    },
+    {
+      "workflowId": "wf-billing-invoice",
+      "workflowName": "Invoice Creation and Payment",
+      "purpose": "Generate invoices and record patient payments",
+      "triggerSource": "User",
+      "triggerAction": "Create invoice or record payment",
+      "steps": [
+        {
+          "stepId": 1,
+          "action": "User selects patient and procedure code",
+          "nodeType": "Trigger"
+        },
+        {
+          "stepId": 2,
+          "action": "Enter amount and payment details",
+          "nodeType": "Decision",
+          "leadsTo": 3
+        },
+        {
+          "stepId": 3,
+          "action": "Validate invoice data",
+          "nodeType": "Decision",
+          "function": "billing_validate_invoice",
+          "leadsTo": [4, 5]
+        },
+        {
+          "stepId": 4,
+          "condition": "Validation fails",
+          "nodeType": "ErrorOutcome"
+        },
+        {
+          "stepId": 5,
+          "condition": "Validation passes",
+          "action": "Call billing_create_invoice(...)",
+          "nodeType": "Action",
+          "module": "billing_manager",
+          "leadsTo": 6
+        },
+        {
+          "stepId": 6,
+          "action": "Generate invoice ID and create UB1 segment",
+          "nodeType": "Action",
+          "leadsTo": 7
+        },
+        {
+          "stepId": 7,
+          "action": "Save invoice to Data/invoices/",
+          "nodeType": "State",
+          "stateName": "InvoicePending",
+          "leadsTo": 8
+        },
+        {
+          "stepId": 8,
+          "action": "Update patient billing report",
+          "nodeType": "Action",
+          "function": "billing_get_patient_report",
+          "leadsTo": 9
+        },
+        {
+          "stepId": 9,
+          "action": "Log billing action in audit trail",
+          "nodeType": "Action",
+          "leadsTo": 10
+        },
+        {
+          "stepId": 10,
+          "action": "Display invoice and confirmation",
+          "nodeType": "SuccessOutcome",
+          "terminalCondition": "Invoice created successfully"
+        }
+      ]
+    },
+    {
+      "workflowId": "wf-audit-compliance",
+      "workflowName": "Audit Trail and Compliance Reporting",
+      "purpose": "Track all system actions for compliance and audit purposes",
+      "triggerSource": "System",
+      "triggerAction": "Any action affecting patient data",
+      "steps": [
+        {
+          "stepId": 1,
+          "action": "Critical action (create, update, delete) occurs",
+          "nodeType": "Trigger"
+        },
+        {
+          "stepId": 2,
+          "action": "Capture action details (user, timestamp, field, old/new values)",
+          "nodeType": "Action",
+          "leadsTo": 3
+        },
+        {
+          "stepId": 3,
+          "action": "Call audit_log_action(...) or audit_log_system_action(...)",
+          "nodeType": "Action",
+          "module": "audit_logger",
+          "leadsTo": 4
+        },
+        {
+          "stepId": 4,
+          "action": "Format and write entry to Data/audit_logs/",
+          "nodeType": "State",
+          "stateName": "AuditLogged",
+          "leadsTo": 5
+        },
+        {
+          "stepId": 5,
+          "action": "Generate compliance report on demand",
+          "nodeType": "Decision",
+          "leadsTo": [6, 7]
+        },
+        {
+          "stepId": 6,
+          "condition": "Export requested",
+          "action": "Call audit_export_to_csv or audit_export_to_text",
+          "nodeType": "Action",
+          "leadsTo": 7
+        },
+        {
+          "stepId": 7,
+          "action": "Audit trail maintenance complete",
+          "nodeType": "SuccessOutcome",
+          "terminalCondition": "Action logged and audit trail current"
+        }
+      ]
+    }
+  ],
+  "userRoles": [
+    {
+      "role": "USER",
+      "permissions": [
+        "View own patient record",
+        "View own appointments",
+        "View own invoices",
+        "Update own profile"
+      ]
+    },
+    {
+      "role": "ADMIN",
+      "permissions": [
+        "Create/update/delete patient records",
+        "Manage appointments (all)",
+        "Manage billing (all)",
+        "Create user accounts",
+        "View audit trail",
+        "System maintenance"
+      ]
+    }
+  ],
+  "systemStates": [
+    {
+      "stateName": "SessionActive",
+      "duration": "8 hours",
+      "transitions": ["SessionExpired", "UserLogout"]
+    },
+    {
+      "stateName": "AppointmentPending",
+      "transitions": ["AppointmentConfirmed", "AppointmentCancelled"]
+    },
+    {
+      "stateName": "InvoicePending",
+      "transitions": ["InvoicePaid", "InvoicePartiallyPaid", "InvoiceVoided"]
+    }
+  ]
+}

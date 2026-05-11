@@ -2,47 +2,25 @@
 agent: 'wiki'
 description: 'Update structure, workflow, and linking based on completed change logs'
 ---
-Task:
-Update project tracking files based on completed changes.
 
-Context:
-- Scan: .github/utility/linking/change_log/
-- Identify new or completed entries (**status:** == reviewed)
+## Task
+Update project tracking files based on completed changes
+Scan change_log for reviewed entries and apply relevant updates to SOT files
 
-Actions:
-- Extract relevant structural or workflow changes
-- Apply updates to:
+## Context Boundaries
+- Read: change_log (scan for **status** : REVIEWED)
+- Read: planning_log (matching task records)
+- Modify: structure.json, workflow.json, linking.json (only **status** : REVIEWED in change_log)
+- Scope: only changes not yet reflected
 
-  - .github/utility/SOT/structure.json
-  - .github/utility/SOT/workflow.json
-  - .github/utility/SOT/linking.json
+## Constraints
+- do NOT apply unreviewed changes
+- do NOT guess missing information
+- do NOT modify unrelated parts
+- do NOT assume beyond current state
+- do NOT change **status** field in change_log
 
----
-
-Cleanup Step:
-
-After successfully applying updates:
-
-- Locate the corresponding entry in:
-  .github/utility/linking/planning_log/
-
-- Remove that entry if:
-  - the same task status in `./github/utility/linking/change_log/` is **status:** == reviewed only
-
----
-
-Rules:
-- Only apply confirmed changes (**status:** == reviewed)
-- Only apply changes not yet reflected
-- Do not guess missing information
-- Keep updates consistent with current project state
-- Do not modify unrelated parts
-
----
-
-Output:
+## Output
 - Summary of updates made (chat only)
-
----
-
-Stop after updating and cleanup
+- Cleanup: Remove planning_log entry only if corresponding change_log **status** == REVIEWED
+- Stop after updating and cleanup

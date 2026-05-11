@@ -2,29 +2,25 @@
 agent: 'sherlock'
 description: 'Re-implement task based on updated plan after review failure'
 ---
-
 Use recheck.skill.md
 
-Task:
-Recheck: ${input:task:ticket or feature name (optional)}
+## Task
+Recheck: ${input:task:ticket or feature name (optional)} 
+Re-implement based on updated plan and resolve flagged issues
 
-Mode:
-- Re-implementation
+## Context Boundaries
+- just scan change_log for entries with **status**: RECHECK if no input match STOP
+- Read: planning_log/ (source of truth)
+- Read: change_log/ (execution history) for better context of what to fix
+- scope: task-specific files and dependencies only
 
-Context:
-- If task provided → use it
-- If not → scan:
-  .github/utility/linking/change_log/
-  → find status: recheck
 
-Rules:
-- ALWAYS use updated plan from:
-  .github/utility/linking/planning_log/
-- planning_log = read-only
-- ALWAYS update existing change_log file (no recreate)
-- Use exact task name
+## Constraints
+- do NOT recreate change_log (update existing only)
+- do NOT ignore updated plan
+- do NOT use wrong task name
+- do NOT modify `.github/utility/linking/planning_log/` and `.github/utility/linking/SOT/` (READ-ONLY)
 
-Output:
-- summary of fixes
-- files modified
-- resolved issues
+## Output
+- **status**: COMPLETED in change_log when done
+- print out STATUS: <state> | NEXT_ACTION: <step>

@@ -37,18 +37,7 @@ When your changes create orphans:
 
 The test: Every changed line should trace directly to the user's request.
 
-### 4. Goal-Driven Execution
- 
-**Define success criteria. Loop until verified.** 
-Transform tasks into verifiable goals:
-- "Add validation" → "Write tests for invalid inputs, then make them pass"
-- "Fix the bug" → "Write a test that reproduces it, then make it pass"
-- "Refactor X" → "Ensure tests pass before and after"
-- "Implement feature Y" → "planned out way to do it, then execute but do ask"
-- "investigate issue Z" → "Identify root cause, edge cases, and a clear implementation plan"
-- "improve performance" → "Identify bottleneck, propose specific optimization, and verify improvement with benchmarks"
-- "handle error case E" → "Write a test that triggers E, then implement handling to make it pass"
-- "improve feature F" → "Identify specific improvements, implement them, and verify with tests or benchmarks" 
+### 4. Goal-Driven Execution 
 
 For multi-step tasks, state a brief plan:
 1. [Step] → verify: [check]
@@ -65,10 +54,6 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
   - ALWAYS read the current file content first
   - NEVER recreate the file/folder if it already exists
   - ALWAYS modify or append to the existing file
-
-- For log and tracking files:
-  - Do NOT overwrite existing entries
-  - Append new entries or update specific sections only
 
 - For structured and core files:
   - Preserve all valid existing content

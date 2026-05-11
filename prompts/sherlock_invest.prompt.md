@@ -2,27 +2,22 @@
 agent: 'sherlock'
 description: 'Deep investigation and analysis of a topic/module'
 ---
-
 Use investigate.skill.md
 
-Task:
+## Task
 Investigate: ${input:task:topic or module}
+Analyze structure, relationships, and implementation details
 
-Mode:
-- Deep analysis
+## Context Boundaries
+- have to have context of what to investigate (topic/module), if not, STOP and ask for details
+- Read: planning_log (source of truth)
+- Read: change_log (execution history)
+- Scope: task-specific files and dependencies only
+- do NOT modify `.github/utility/linking/planning_log/` and `.github/utility/linking/SOT/` (READ-ONLY)
 
-Context:
-- Use change_log for implementation reference
-- Use planning_log for intended behavior (read-only)
+## Constraints
+- do NOT modify planning_log
+- do NOT scan entire repo unnecessarily
+- do NOT go beyond relevant scope
 
-Rules:
-- Do NOT modify:
-  .github/utility/linking/planning_log/
-- Focus only on relevant modules/files
-- Avoid unnecessary full-repo scanning
-
-Output:
-- overview
-- key components
-- relationship map
-- observations
+print out STATUS: <state> | NEXT_ACTION: <step>

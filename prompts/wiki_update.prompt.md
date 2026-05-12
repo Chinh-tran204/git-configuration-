@@ -22,5 +22,6 @@ Scan change_log for reviewed entries and apply relevant updates to SOT files
 
 ## Output
 - Summary of updates made (chat only)
-- Cleanup: Remove planning_log entry only if corresponding change_log **status** == REVIEWED
+- Cleanup: delete planning_log entry  using bash if corresponding change_log **status** == REVIEWED
+- Ensure planning_log reflects only pending or in-progress tasks
 - Stop after updating and cleanup
